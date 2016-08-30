@@ -1,14 +1,20 @@
 #!/usr/bin/env python3
+from __future__ import print_function
 import os
 import sys
 import glob
-import logging
+#import logging
 import argparse
 import subprocess
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError
+
 
 def main(trim_path, bowtie_path, picard_path, gatk_path,
-        input_path, index_path, dbsnp_path, adapter_path,
-        ref_path, out_path):
+         input_path, index_path, dbsnp_path, adapter_path,
+         ref_path, out_path):
 
     #Get complete path
     trim_path = os.path.abspath(trim_path)
@@ -52,11 +58,9 @@ def main(trim_path, bowtie_path, picard_path, gatk_path,
     if not os.path.exists(adapter_path):
         raise FileNotFoundError('Adapter file not found at {0}'.format(adapter_path))
 
-
     #Creat output directory
     if not os.path.exists(out_path):
         os.mkdir(out_path)
-
 
     #Trim fastq files
     read1 = input_path[0]
@@ -77,10 +81,9 @@ def main(trim_path, bowtie_path, picard_path, gatk_path,
         print('Fastq trimming failed; Exiting program')
         sys.exit()
 
-
     #Align the reads using bowtie
     sam_path = '{1}.sam'.format(out_path, os.path.splitext(tread1)[0])
-    bcmd = [ bowtie_path, '-x', index_path, '-S', sam_path, '-p', '1' , '-1',
+    bcmd = [bowtie_path, '-x', index_path, '-S', sam_path, '-p', '1', '-1',
             tread1, '-2', tread2]
 
     brun = subprocess.Popen(bcmd, shell=False)
@@ -93,10 +96,10 @@ def main(trim_path, bowtie_path, picard_path, gatk_path,
     #Add read group information
     add_path = '{0}/{1}_RG.bam'.format(out_path, os.path.splitext(os.path.basename(sam_path))[0])
     acmd = ['java', '-Xmx1g', '-jar', picard_path, 'AddOrReplaceReadGroups',
-        'I='+sam_path , 'O='+add_path, 'SORT_ORDER=coordinate', 'RGID=Test',
-        'RGLB=ExomeSeq', 'RGPL=Illumina', 'RGPU=HiSeq2500', 'RGSM=Test',
-        'RGCN=AtlantaGenomeCenter', 'RGDS=ExomeSeq', 'RGDT=2016-08-24', 'RGPI=null',
-        'RGPG=Test', 'RGPM=Test', 'CREATE_INDEX=true']
+            'I=' + sam_path, 'O=' + add_path, 'SORT_ORDER=coordinate', 'RGID=Test',
+            'RGLB=ExomeSeq', 'RGPL=Illumina', 'RGPU=HiSeq2500', 'RGSM=Test',
+            'RGCN=AtlantaGenomeCenter', 'RGDS=ExomeSeq', 'RGDT=2016-08-24', 'RGPI=null',
+            'RGPG=Test', 'RGPM=Test', 'CREATE_INDEX=true']
 
     arun = subprocess.Popen(acmd, shell=False)
     arun.wait()
@@ -108,9 +111,9 @@ def main(trim_path, bowtie_path, picard_path, gatk_path,
     #Mark PCR duplicates
     dup_path = '{0}/{1}_MD.bam'.format(out_path, os.path.splitext(os.path.basename(sam_path))[0])
     met_path = '{0}/{1}_MD.metrics'.format(out_path, os.path.splitext(os.path.basename(sam_path))[0])
-    mdcmd = ['java', '-Xmx1g', '-jar', picard_path, 'MarkDuplicates', 'I='+add_path,
-        'O='+dup_path, 'METRICS_FILE='+met_path, 'REMOVE_DUPLICATES=false',
-        'ASSUME_SORTED=true', 'CREATE_INDEX=true']
+    mdcmd = ['java', '-Xmx1g', '-jar', picard_path, 'MarkDuplicates', 'I=' + add_path,
+             'O=' + dup_path, 'METRICS_FILE=' + met_path, 'REMOVE_DUPLICATES=false',
+             'ASSUME_SORTED=true', 'CREATE_INDEX=true']
 
     mdrun = subprocess.Popen(mdcmd, shell=False)
     mdrun.wait()
@@ -121,8 +124,8 @@ def main(trim_path, bowtie_path, picard_path, gatk_path,
     #Fix mate information
     fix_path = '{0}/{1}_FM.bam'.format(out_path, os.path.splitext(os.path.basename(sam_path))[0])
     fcmd = ['java', '-Xmx1g', '-jar', picard_path, 'FixMateInformation',
-        'I='+dup_path, 'O='+fix_path, 'ASSUME_SORTED=true', 'ADD_MATE_CIGAR=true',
-        'CREATE_INDEX=true']
+            'I=' + dup_path, 'O=' + fix_path, 'ASSUME_SORTED=true', 'ADD_MATE_CIGAR=true',
+            'CREATE_INDEX=true']
 
     frun = subprocess.Popen(fcmd, shell=False)
     frun.wait()
@@ -135,8 +138,8 @@ def main(trim_path, bowtie_path, picard_path, gatk_path,
     interval_path = '{0}/{1}.intervals'.format(out_path, os.path.splitext(os.path.basename(sam_path))[0])
 
     trcmd = ['java', '-jar', gatk_path, '-T', 'RealignerTargetCreator', '-o',
-        interval_path, '-nt', '1', '-I', fix_path, '-R', ref_path, '-known',
-        dbsnp_path]
+             interval_path, '-nt', '1', '-I', fix_path, '-R', ref_path, '-known',
+             dbsnp_path]
 
     trrun = subprocess.Popen(trcmd, shell=False)
     trrun.wait()
@@ -145,13 +148,12 @@ def main(trim_path, bowtie_path, picard_path, gatk_path,
         print('Realigner Target creator failed; Exiting program')
         sys.exit()
 
-
     #Run indel realigner
     ral_path = '{0}/{1}_IR.bam'.format(out_path, os.path.splitext(os.path.basename(sam_path))[0])
 
     recmd = ['java', '-jar', gatk_path, '-T', 'IndelRealigner',
-        '--targetIntervals', interval_path, '-o', ral_path,
-        '-I', fix_path, '-R', ref_path]
+             '--targetIntervals', interval_path, '-o', ral_path,
+             '-I', fix_path, '-R', ref_path]
 
     rerun = subprocess.Popen(recmd, shell=False)
     rerun.wait()
@@ -164,8 +166,8 @@ def main(trim_path, bowtie_path, picard_path, gatk_path,
     bqs_path = '{0}/{1}.table'.format(out_path, os.path.splitext(os.path.basename(sam_path))[0])
 
     bqscmd = ['java', '-jar', gatk_path, '-T', 'BaseRecalibrator', '-R', ref_path,
-        '-I', ral_path, '-o', bqs_path, '-nct', '1', '-cov', 'ReadGroupCovariate',
-        '-knownSites', dbsnp_path]
+              '-I', ral_path, '-o', bqs_path, '-nct', '1', '-cov', 'ReadGroupCovariate',
+              '-knownSites', dbsnp_path]
 
     bqsrun = subprocess.Popen(bqscmd, shell=False)
     bqsrun.wait()
@@ -177,8 +179,7 @@ def main(trim_path, bowtie_path, picard_path, gatk_path,
     #Print Reads
     fbam_path = '{0}/{1}_final.bam'.format(out_path, os.path.splitext(os.path.basename(sam_path))[0])
     prcmd = ['java', '-jar', gatk_path, '-T', 'PrintReads', '-R', ref_path, '-I',
-            ral_path, '-o', fbam_path, '-BQSR', bqs_path, '-nct', '1']
-
+             ral_path, '-o', fbam_path, '-BQSR', bqs_path, '-nct', '1']
 
     prrun = subprocess.Popen(prcmd, shell=False)
     prrun.wait()
@@ -187,13 +188,12 @@ def main(trim_path, bowtie_path, picard_path, gatk_path,
         print('Print reads failed; Exiting program')
         sys.exit()
 
-
     #Haplotype caller
     vcf_path = '{0}/variants.vcf'.format(out_path, os.path.splitext(os.path.basename(sam_path))[0])
 
     hcmd = ['java', '-jar', gatk_path, '-T', 'HaplotypeCaller', '-R', ref_path,
-        '-I', fbam_path, '--dbsnp', dbsnp_path, '-o', vcf_path, '-nct', '1',
-        '-gt_mode', 'DISCOVERY']
+            '-I', fbam_path, '--dbsnp', dbsnp_path, '-o', vcf_path, '-nct', '1',
+            '-gt_mode', 'DISCOVERY']
 
     hrun = subprocess.Popen(hcmd, shell=False)
     hrun.wait()
@@ -201,7 +201,6 @@ def main(trim_path, bowtie_path, picard_path, gatk_path,
     if hrun.returncode != 0:
         print('Haplotype caller failed; Exiting program')
         sys.exit()
-
 
     print('Variant call pipeline completed')
     print('VCF file can be found at {0}'.format(vcf_path))
@@ -223,5 +222,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 main(args.trim_path, args.bowtie_path, args.picard_path, args.gatk_path,
-    args.input_path, args.index_path, args.dbsnp_path, args.adapter_path,
-    args.ref_path, args.out_path)
+     args.input_path, args.index_path, args.dbsnp_path, args.adapter_path,
+     args.ref_path, args.out_path)
