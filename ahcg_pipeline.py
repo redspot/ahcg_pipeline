@@ -221,6 +221,6 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--outpath', dest='out_path', type=str, help='Path to Ouput directory')
     args = parser.parse_args()
 
-main(args.trim_path, args.bowtie_path, args.picard_path, args.gatk_path,
-     args.input_path, args.index_path, args.dbsnp_path, args.adapter_path,
-     args.ref_path, args.out_path)
+    main(args.trim_path, args.bowtie_path, args.picard_path, args.gatk_path,
+         args.input_path, args.index_path, args.dbsnp_path, args.adapter_path,
+         args.ref_path, args.out_path)
