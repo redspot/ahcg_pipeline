@@ -51,3 +51,26 @@ To access help use the following command:
 ```{sh}
 python3 ahcg_pipeline.py -h
 ```
+
+Example shell script to run pipeline:
+```{sh}
+#!/bin/bash
+BASE_DIR="/Users/wmartin45/school/biol8803f"
+TRIM=$BASE_DIR/ahcg_pipeline/lib/Trimmomatic-0.36/trimmomatic-0.36.jar
+ADAPTER=$BASE_DIR/ahcg_pipeline/lib/Trimmomatic-0.36/adapters/NexteraPE-PE.fa
+BOWTIE=$BASE_DIR/ahcg_pipeline/lib/bowtie2-2.2.9/bowtie2
+PICARD=$BASE_DIR/ahcg_pipeline/lib/picard.jar
+GATK=$BASE_DIR/ahcg_pipeline/lib/GenomeAnalysisTK.jar
+
+python3 $BASE_DIR/ahcg_pipeline/ahcg_pipeline.py \
+    -t $TRIM \
+    -b $BOWTIE \
+    -p $PICARD \
+    -g $GATK \
+    -i $BASE_DIR/test_r1.fastq.gz $BASE_DIR/test_r2.fastq.gz \
+    -w $BASE_DIR/resources/genome/hg19 \
+    -d $BASE_DIR/resources/dbsnp/dbsnp_138.hg19.vcf.gz \
+    -r $BASE_DIR/resources/genome/hg19.fa \
+    -a $ADAPTER \
+    -o $BASE_DIR/hw1
+```
