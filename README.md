@@ -19,7 +19,7 @@ brew install homebrew/science/picard-tools
 
 ## Reference genome
 
-Reference genomes can be downloaded from [Illumina iGenomes](http://support.illumina.com/sequencing/sequencing_software/igenome.html)
+Reference genomes can be downloaded from [Illumina iGenomes](http://support.illumina.com/sequencing/sequencing_software/igenome.html).  
 Or, you can get a reduced version from [prism](www.prism.gatech.edu/~sravishankar9/resources.tar.gz)
 
 ## Test data
