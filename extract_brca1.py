@@ -43,7 +43,6 @@ with io.open(coord_fn) as coord_fd:
         stops = list(map(int, filter(lambda s: s != "", row[10].split(','))))
         gene_name = row[12]
         if gene_name == 'BRCA1':
-            log_mesg("found {} in {}".format(gene_id, coord_fn))
             brca1_dict[gene_id]['chrom'] = chrom
             brca1_dict[gene_id]['strand'] = strand
             brca1_dict[gene_id]['start'] = start
@@ -53,87 +52,58 @@ with io.open(coord_fn) as coord_fd:
             brca1_dict[gene_id]['stops'] = stops
 
             brca1_dict[gene_id]['prefix'] = start - starts[0]
-            log_mesg("{}: start={} starts[0]={} prefix={}".format(
-                gene_id,
-                start,
-                starts[0],
-                brca1_dict[gene_id]['prefix']
-            ))
             previous = 0
             for s, e in reversed(list(zip(starts, stops))):
-                log_mesg("{}: s={} stop={}".format(
-                    gene_id, s, stop,
-                ))
                 if stop > s:
                     brca1_dict[gene_id]['suffix'] = e - stop + previous
-                    log_mesg("{}: e={} stop={} suffix={}".format(
-                        gene_id, e, stop, brca1_dict[gene_id]['suffix']
-                    ))
                     break
                 else:
                     previous += e - s
 
 for gene_id in brca1_dict.keys():
-    bed_fn = gene_id + '.bed'
-    starts = brca1_dict[gene_id]['starts']
-    stops = brca1_dict[gene_id]['stops']
-    #chrom,s,e,name,1,strand
-    bed_fmt = "{}\t{}\t{}\t{}\t1\t{}\n"
-    log_mesg("writing {}".format(bed_fn))
-    with io.open(bed_fn, 'w') as bed_fd:
-        for i, t in enumerate(zip(starts, stops)):
-            s, e = t
-            name = gene_id + '_' + str(i)
-            bed_line = bed_fmt.format(
-                brca1_dict[gene_id]['chrom'],
-                s,
-                e,
-                name,
-                brca1_dict[gene_id]['strand'],
-            )
-            bed_fd.write(bed_line)
-    log_mesg("done writing {}".format(bed_fn))
+    if gene_id == 'NM_007294':
+        bed_fn = gene_id + '.bed'
+        starts = brca1_dict[gene_id]['starts']
+        stops = brca1_dict[gene_id]['stops']
+        #chrom,s,e,name,1,strand
+        bed_fmt = "{}\t{}\t{}\t{}\t1\t{}\n"
+        with io.open(bed_fn, 'w') as bed_fd:
+            for i, t in enumerate(zip(starts, stops)):
+                s, e = t
+                name = gene_id + '_' + str(i)
+                bed_line = bed_fmt.format(
+                    brca1_dict[gene_id]['chrom'],
+                    s,
+                    e,
+                    name,
+                    brca1_dict[gene_id]['strand'],
+                )
+                bed_fd.write(bed_line)
 
-    try:
-        cmd = list(bedtools_cmd + [bed_fn])
-        log_mesg("running {}".format(cmd))
-        exons_fa = check_output(cmd, universal_newlines=True)
-        log_mesg("done running: len={}".format(len(exons_fa)))
-    except CalledProcessError:
-        exons_fa = None
-    if exons_fa is None:
-        log_mesg("error: bedtools returned non-zero")
-    else:
-        fa_fn = gene_id + '.fa'
-        with io.open(fa_fn, 'w') as fa_fd:
-            fa_fd.write(exons_fa)
-        exons = exons_fa.split('\n')[:-1]
-        log_mesg("exons expected={}, exons got={}".format(
-            brca1_dict[gene_id]['count'],
-            len(exons) / 2
-        ))
-        sequence = ""
-        prefix = brca1_dict[gene_id]['prefix']
-        suffix = brca1_dict[gene_id]['suffix']
-        if brca1_dict[gene_id]['strand'] == '-':
-            exons = reversed(exons)
-            new_suffix = prefix
-            prefix = suffix
-            suffix = new_suffix
-        for line in exons:
-            if not line.startswith('>'):
-                sequence += line
-        log_mesg("prefix={} suffix={} slice={}:{}".format(
-            prefix,
-            suffix,
-            prefix,
-            -suffix,
-        ))
-        sequence_trimmed = sequence[prefix:-suffix]
-        log_mesg("first codon = {}".format(sequence_trimmed[0:3]))
-        seq_fn = gene_id + '.seq.txt'
-        log_mesg("writing sequence to {}".format(seq_fn))
-        with io.open(seq_fn, 'w') as seq_fd:
-            seq_fd.write(sequence_trimmed)
-            seq_fd.write('\n')
-            seq_fd.write(sequence)
+        try:
+            cmd = list(bedtools_cmd + [bed_fn])
+            exons_fa = check_output(cmd, universal_newlines=True)
+        except CalledProcessError:
+            exons_fa = None
+        if exons_fa is None:
+            log_mesg("error: bedtools returned non-zero")
+        else:
+            fa_fn = gene_id + '.fa'
+            with io.open(fa_fn, 'w') as fa_fd:
+                fa_fd.write(exons_fa)
+            exons = exons_fa.split('\n')[:-1]
+            sequence = ""
+            prefix = brca1_dict[gene_id]['prefix']
+            suffix = brca1_dict[gene_id]['suffix']
+            if brca1_dict[gene_id]['strand'] == '-':
+                exons = reversed(exons)
+                new_suffix = prefix
+                prefix = suffix
+                suffix = new_suffix
+            for line in exons:
+                if not line.startswith('>'):
+                    sequence += line
+            sequence_trimmed = sequence[prefix:-suffix]
+            seq_fn = gene_id + '.seq.txt'
+            with io.open(seq_fn, 'w') as seq_fd:
+                seq_fd.write(sequence_trimmed)
