@@ -74,3 +74,16 @@ python3 $BASE_DIR/ahcg_pipeline/ahcg_pipeline.py \
     -a $ADAPTER \
     -o $BASE_DIR/hw1
 ```
+
+# Genome in a bottle
+
+link acquired from https://github.com/genome-in-a-bottle/giab_latest_release
+
+1. The latest release for NA12878_HG001 is under:
+
+   ftp://ftp-trace.ncbi.nlm.nih.gov/giab/ftp/release/NA12878_HG001/latest/
+
+```{sh}
+samtools view HG001.hs37d5.300x.bam -L NM_007294.bed -b -o NM_007294.bam
+bedtools bamtofastq -i NM_007294.bam -fq  NM_007294.R1.fq -fq2  NM_007294.R2.fq
+```
