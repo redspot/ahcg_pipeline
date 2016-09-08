@@ -85,7 +85,7 @@ link acquired from https://github.com/genome-in-a-bottle/giab_latest_release
 
 2. Fastq files for testing
 
-   http://vannberg.biology.gatech.edu/data/ahcg2016/fq/NA12878_brca_r1.fastq
+   http://vannberg.biology.gatech.edu/data/ahcg2016/fq/NA12878_brca_r1.fastq 
    http://vannberg.biology.gatech.edu/data/ahcg2016/fq/NA12878_brca_r2.fastq
 
 ```{sh}
