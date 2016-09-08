@@ -83,6 +83,11 @@ link acquired from https://github.com/genome-in-a-bottle/giab_latest_release
 
    ftp://ftp-trace.ncbi.nlm.nih.gov/giab/ftp/release/NA12878_HG001/latest/
 
+2. Fastq files for testing
+
+   http://vannberg.biology.gatech.edu/data/ahcg2016/fq/NA12878_brca_r1.fastq
+   http://vannberg.biology.gatech.edu/data/ahcg2016/fq/NA12878_brca_r2.fastq
+
 ```{sh}
 samtools view HG001.hs37d5.300x.bam -L NM_007294.bed -b -o NM_007294.bam
 bedtools bamtofastq -i NM_007294.bam -fq  NM_007294.R1.fq -fq2  NM_007294.R2.fq
