@@ -88,7 +88,10 @@ link acquired from https://github.com/genome-in-a-bottle/giab_latest_release
    http://vannberg.biology.gatech.edu/data/ahcg2016/fq/NA12878_brca_r1.fastq  
    http://vannberg.biology.gatech.edu/data/ahcg2016/fq/NA12878_brca_r2.fastq
 
+4 sets of bam files  
+
 ```{sh}
+samtools merge out.bam in1.bam in2.bam in3.bam in4.bam
 samtools view HG001.hs37d5.300x.bam -L NM_007294.bed -b -o NM_007294.bam
 bedtools bamtofastq -i NM_007294.bam -fq  NM_007294.R1.fq -fq2  NM_007294.R2.fq
 ```
