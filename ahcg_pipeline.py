@@ -11,6 +11,8 @@ try:
 except NameError:
     FileNotFoundError = IOError
 
+THREAD_COUNT = 8
+
 
 def run_process(args, mesg):
     p = subprocess.Popen(args, shell=False)
@@ -93,7 +95,7 @@ def main(trim_path, bowtie_path, picard_path, gatk_path,
             'CREATE_INDEX=true']
     interval_path = '{0}/{1}.intervals'.format(out_path, os.path.splitext(os.path.basename(sam_path))[0])
     trcmd = ['java', '-jar', gatk_path, '-T', 'RealignerTargetCreator', '-o',
-             interval_path, '-nt', '1', '-I', fix_path, '-R', ref_path, '-known',
+             interval_path, '-nt', THREAD_COUNT, '-I', fix_path, '-R', ref_path, '-known',
              dbsnp_path]
     ral_path = '{0}/{1}_IR.bam'.format(out_path, os.path.splitext(os.path.basename(sam_path))[0])
     recmd = ['java', '-jar', gatk_path, '-T', 'IndelRealigner',
@@ -101,14 +103,14 @@ def main(trim_path, bowtie_path, picard_path, gatk_path,
              '-I', fix_path, '-R', ref_path]
     bqs_path = '{0}/{1}.table'.format(out_path, os.path.splitext(os.path.basename(sam_path))[0])
     bqscmd = ['java', '-jar', gatk_path, '-T', 'BaseRecalibrator', '-R', ref_path,
-              '-I', ral_path, '-o', bqs_path, '-nct', '1', '-cov', 'ReadGroupCovariate',
+              '-I', ral_path, '-o', bqs_path, '-nct', THREAD_COUNT, '-cov', 'ReadGroupCovariate',
               '-knownSites', dbsnp_path]
     fbam_path = '{0}/{1}_final.bam'.format(out_path, os.path.splitext(os.path.basename(sam_path))[0])
     prcmd = ['java', '-jar', gatk_path, '-T', 'PrintReads', '-R', ref_path, '-I',
-             ral_path, '-o', fbam_path, '-BQSR', bqs_path, '-nct', '1']
+             ral_path, '-o', fbam_path, '-BQSR', bqs_path, '-nct', THREAD_COUNT]
     vcf_path = '{0}/variants.vcf'.format(out_path, os.path.splitext(os.path.basename(sam_path))[0])
     hcmd = ['java', '-jar', gatk_path, '-T', 'HaplotypeCaller', '-R', ref_path,
-            '-I', fbam_path, '--dbsnp', dbsnp_path, '-o', vcf_path, '-nct', '1',
+            '-I', fbam_path, '--dbsnp', dbsnp_path, '-o', vcf_path, '-nct', THREAD_COUNT,
             '-gt_mode', 'DISCOVERY']
 
     #Trim fastq files
