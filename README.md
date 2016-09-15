@@ -95,3 +95,20 @@ samtools merge out.bam in1.bam in2.bam in3.bam in4.bam
 samtools view HG001.hs37d5.300x.bam -L NM_007294.bed -b -o NM_007294.bam
 bedtools bamtofastq -i NM_007294.bam -fq  NM_007294.R1.fq -fq2  NM_007294.R2.fq
 ```
+
+# vcf gold standard comparision
+
+```{sh}
+wget ftp://ftp-trace.ncbi.nlm.nih.gov/giab/ftp/data/NA12878/Garvan_NA12878_HG001_HiSeq_Exome/project.NIST.hc.snps.indels.vcf
+brew install bcftools
+bgzip project.NIST.hc.snps.indels.vcf
+bgzip variants.vcf
+tabix -p vcf project.NIST.hc.snps.indels.vcf
+tabix -p vcf variants.vcf
+bcftools stats project.NIST.hc.snps.indels.vcf variants.vcf > variants.vchk
+#apt install python-numpy python-scipy python-matplotlib
+pip install numpy
+pip install scipy
+pip install matplotlib
+plot-vcftools -p output_dir variants.vchk
+```
