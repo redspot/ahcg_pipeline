@@ -11,7 +11,7 @@ try:
 except NameError:
     FileNotFoundError = IOError
 
-THREAD_COUNT = 8
+THREAD_COUNT = str(8)
 
 
 def run_process(args, mesg):
