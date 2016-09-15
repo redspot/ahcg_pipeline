@@ -106,9 +106,12 @@ bgzip variants.vcf
 tabix -p vcf project.NIST.hc.snps.indels.vcf
 tabix -p vcf variants.vcf
 bcftools stats project.NIST.hc.snps.indels.vcf variants.vcf > variants.vchk
-#apt install python-numpy python-scipy python-matplotlib
-pip install numpy
-pip install scipy
-pip install matplotlib
-plot-vcftools -p output_dir variants.vchk
+apt install python-numpy python-scipy python-matplotlib
+apt install texlive-binaries texlive-latex-base texlive-latex-recommended texlive-latex-extra
+#pip install numpy
+#pip install scipy
+#pip install matplotlib
+#brew install bcftools
+#brew cask install mactex
+plot-vcftools -p output_dir --no-PDF variants.vchk
 ```
