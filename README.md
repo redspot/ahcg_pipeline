@@ -98,6 +98,22 @@ bedtools bamtofastq -i NM_007294.bam -fq  NM_007294.R1.fq -fq2  NM_007294.R2.fq
 
 # vcf gold standard comparision
 
+Some rough notes:  
+vcf we generated  
+many gold vcf's  
+project.NIST.hc.snps.indels.vcf  
+get ranges from bed  
+then grab snps from vcf that are in region  
+or use bedtools intersect  
+look for specificity/sensitivity  
+
+ID=AD  
+ID=QD
+
+GATK variant quality learning and filtering  
+https://software.broadinstitute.org/gatk/guide/article?id=1259
+
+
 ```{sh}
 wget ftp://ftp-trace.ncbi.nlm.nih.gov/giab/ftp/data/NA12878/Garvan_NA12878_HG001_HiSeq_Exome/project.NIST.hc.snps.indels.vcf
 brew install bcftools
@@ -114,4 +130,16 @@ apt install texlive-binaries texlive-latex-base texlive-latex-recommended texliv
 #brew install bcftools
 #brew cask install mactex
 plot-vcftools -p output_dir --no-PDF variants.vchk
+```
+
+# best way to split large genome bam file
+
+```{sh}
+bamtools split -in file.bam -reference
+```
+
+# snippets
+
+```{sh}
+cat ahcg_pipeline/breast_ovarian_cancer_genelist.txt | cut -f2 | tail -n26 | cut -d. -f1 | xargs -n1 -I%%% grep %%% hg19_refGene.txt | cut -f3 | sort -u >bc_oc_chroms.txt
 ```
