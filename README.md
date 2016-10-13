@@ -157,3 +157,9 @@ then, trim vcf using second script (1min)
 bash bcoc_vqsr.sh
 bash bcoc_apply_recal.sh
 ```
+
+# matching variants from vcf with clinical risks
+
+```{sh}
+python3 compare_clin_with_vcf.py BRCA1_brca_exchange_variants.csv final_variants_trimmed_and_interected.vcf 
+```
