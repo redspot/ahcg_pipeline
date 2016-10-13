@@ -18,7 +18,7 @@ for i, line in enumerate(lines):
         stop_pad = 20
     rec = line.split('\t')
     rec[1] = str(int(rec[1]) - start_pad)
-    rec[2] = str(int(rec[2]) - stop_pad)
+    rec[2] = str(int(rec[2]) + stop_pad)
     new_lines.append('\t'.join(rec) + '\n')
 
 o_fn = op.join(op.dirname(sys.argv[1]), 'pad_' + op.basename(sys.argv[1]))
