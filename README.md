@@ -113,7 +113,6 @@ ID=QD
 GATK variant quality learning and filtering  
 https://software.broadinstitute.org/gatk/guide/article?id=1259
 
-
 ```{sh}
 wget ftp://ftp-trace.ncbi.nlm.nih.gov/giab/ftp/data/NA12878/Garvan_NA12878_HG001_HiSeq_Exome/project.NIST.hc.snps.indels.vcf
 brew install bcftools
@@ -142,4 +141,19 @@ bamtools split -in file.bam -reference
 
 ```{sh}
 cat ahcg_pipeline/breast_ovarian_cancer_genelist.txt | cut -f2 | tail -n26 | cut -d. -f1 | xargs -n1 -I%%% grep %%% hg19_refGene.txt | cut -f3 | sort -u >bc_oc_chroms.txt
+```
+
+# VCF quality trimming using VQSR
+
+http://gatkforums.broadinstitute.org/firecloud/discussion/39/variant-quality-score-recalibration-vqsr  
+https://software.broadinstitute.org/gatk/guide/article?id=2805  
+https://software.broadinstitute.org/gatk/guide/tooldocs/org_broadinstitute_gatk_tools_walkers_variantrecalibration_VariantRecalibrator.php  
+
+Edit each script and change any paths needed.  
+then, generate the recalibration files with first script (15-30min)  
+then, trim vcf using second script (1min)  
+
+```{sh}
+bash bcoc_vqsr.sh
+bash bcoc_apply_recal.sh
 ```
