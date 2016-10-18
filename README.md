@@ -163,3 +163,13 @@ bash bcoc_apply_recal.sh
 ```{sh}
 python3 compare_clin_with_vcf.py BRCA1_brca_exchange_variants.csv final_variants_trimmed_and_interected.vcf 
 ```
+
+# coverage calculator
+
+```{sh}
+grep 'NM_007298' bcoc_padded.bed > brca1.bed
+samtools view -L brca1.bed data/project.NIST_NIST7035_H7AP8ADXX_TAAGGCGA_1_NA12878.bwa.markDuplicates.bam -b > new.bam
+bedtools genomecov -ibam new.bam -bga na12878.bga.bed
+bedtools intersect -split -a brca1.bed -b na12878.bga.bed -bed > brca1.coverage_joined.bed
+awk '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$10,$6)}' brca1.coverage_joined.bed > brca1.coverage_final.bed
+```
