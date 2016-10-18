@@ -161,7 +161,15 @@ bash bcoc_apply_recal.sh
 # matching variants from vcf with clinical risks
 
 ```{sh}
-python3 compare_clin_with_vcf.py BRCA1_brca_exchange_variants.csv final_variants_trimmed_and_interected.vcf 
+python3 compare_clin_with_vcf.py final_variants_trimmed_and_interected.vcf BRCA1_brca_exchange_variants.csv BRCA2_brca_exchange_variants.csv \
+| tee brca_clinical_xref.txt
+
+grep -vi benign brca_clinical_xref.txt > brca_clinical_nonbenign_xref.txt
+cat brca_clinical_nonbenign_xref.txt \
+| awk 'BEGIN {FS="\t"} {
+split($1, coord, ":")
+printf("%s\t%s\t%s\t%s\n", coord[1], coord[2], coord[2], $2)}' \
+| sed -E -e 's/^([^c].*)/chr\1/' > brca_clinical_nonbenign_xref.bed
 ```
 
 # coverage calculator
@@ -172,4 +180,7 @@ samtools view -L brca1.bed data/project.NIST_NIST7035_H7AP8ADXX_TAAGGCGA_1_NA128
 bedtools genomecov -ibam new.bam -bga na12878.bga.bed
 bedtools intersect -split -a brca1.bed -b na12878.bga.bed -bed > brca1.coverage_joined.bed
 awk '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$10,$6)}' brca1.coverage_joined.bed > brca1.coverage_final.bed
+
+bedtools intersect -a brca1.final.bed -b brca_clinical_nonbenign_xref.bed -wo > brca_clinical_nonbenign_final.bed
+cat brca_clinical_nonbenign_final.bed | cut -f4,5,7,8,10
 ```
