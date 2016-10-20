@@ -1,0 +1,5 @@
+NM_007298:BRCA1	59	chr17	41196408	Benign(ENIGMA); Benign (ClinVar)
+NM_007298:BRCA1	79	chr17	41197274	Benign(ENIGMA); Benign (ClinVar)
+NM_007298:BRCA1	78	chr17	41197274	Benign(ENIGMA); Benign (ClinVar)
+NM_007298:BRCA1	103	chr17	41223094	Benign(ENIGMA); Benign,no_known_pathogenicity (ClinVar); Pending (BIC)
+NM_007298:BRCA1	119	chr17	41234470	Benign(ENIGMA); Benign (ClinVar); Class 1 (BIC)
