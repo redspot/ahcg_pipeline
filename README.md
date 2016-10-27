@@ -170,6 +170,10 @@ python3 convert_clintxt_to_vcf.py brca_clinical_nonbenign_xref.txt brca_clinical
 
 # coverage calculator
 
+Min generated brca1.join\_final.bed on Vannberg's server.  
+he checked it in here: https://github.com/mjaeyi/ahcg\_pipeline/blob/master/brca1.coverage1.bed  
+NOTE: the filename is different.
+
 ```{sh}
 grep 'NM_007298' bcoc_padded.bed > brca1.bed
 samtools view -L brca1.bed data/project.NIST_NIST7035_H7AP8ADXX_TAAGGCGA_1_NA12878.bwa.markDuplicates.bam -b > new.bam
