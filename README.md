@@ -187,8 +187,8 @@ Rscript draw_depth.R brca_depth.txt brca_depth.png
 
 # report generation
 
-http://www.methods.co.nz/asciidoc/userguide.html 
-http://powerman.name/doc/asciidoc 
+http://www.methods.co.nz/asciidoc/userguide.html  
+http://powerman.name/doc/asciidoc  
 
 ```{sh}
 brew install asciidoc
