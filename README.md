@@ -165,11 +165,7 @@ python3 compare_clin_with_vcf.py final_variants_trimmed_and_interected.vcf BRCA1
 | tee brca_clinical_xref.txt
 
 grep -vi benign brca_clinical_xref.txt > brca_clinical_nonbenign_xref.txt
-cat brca_clinical_nonbenign_xref.txt \
-| awk 'BEGIN {FS="\t"} {
-split($1, coord, ":")
-printf("%s\t%s\t%s\t%s\n", coord[1], coord[2], coord[2], $2)}' \
-| sed -E -e 's/^([^c].*)/chr\1/' > brca_clinical_nonbenign_xref.bed
+python3 convert_clintxt_to_vcf.py brca_clinical_nonbenign_xref.txt brca_clinical_nonbenign_xref.vcf
 ```
 
 # coverage calculator
@@ -177,10 +173,53 @@ printf("%s\t%s\t%s\t%s\n", coord[1], coord[2], coord[2], $2)}' \
 ```{sh}
 grep 'NM_007298' bcoc_padded.bed > brca1.bed
 samtools view -L brca1.bed data/project.NIST_NIST7035_H7AP8ADXX_TAAGGCGA_1_NA12878.bwa.markDuplicates.bam -b > new.bam
-bedtools genomecov -ibam new.bam -bga na12878.bga.bed
-bedtools intersect -split -a brca1.bed -b na12878.bga.bed -bed > brca1.final.bed
-awk '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$10,$6)}' brca1.coverage_joined.bed > brca1.coverage_final.bed
+bedtools genomecov -ibam new.bam -bga > na12878.bga.bed
+bedtools intersect -loj -a brca1.bed -b na12878.bga.bed -bed > brca1.join_final.bed
+awk '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$8,$8,$4,$10,$6)}' brca1.join_final.bed \
+| sed -E -e 's/^chr//' > brca1.final.bed
 
-bedtools intersect -a brca1.final.bed -b brca_clinical_nonbenign_xref.bed -wo > brca_clinical_nonbenign_final.bed
-cat brca_clinical_nonbenign_final.bed | cut -f4,5,7,8,10
+bedtools intersect -a brca1.final.bed -b brca_clinical_nonbenign_xref.vcf -wo > brca_clinical_nonbenign_final.bed
+
+awk '{printf("%s\t%s\t%s\t%s\t%s\t%s\n",$1,$2,$3,$4,$10,$6)}' brca1.join_final.bed > brca1.depths.bed
+python cov.py brca1.depths.bed brca_depth.txt
+Rscript draw_depth.R brca_depth.txt brca_depth.png
+```
+
+# report generation
+
+```{sh}
+brew install asciidoc
+export XML_CATALOG_FILES="/usr/local/etc/xml/catalog"
+pip install --ignore-installed --install-option="--install-scripts=/usr/local/bin" dblatex
+
+awk 'BEGIN {FS="\t"} {
+gsub(/PG=/,"",$14)
+gsub(/\|/,";",$14)
+if ($7 !~ /^chr/) $7 = "chr" $7
+printf("%s\t%s\t%s\t%s\t%s\n",$4,$5,$7,$8,$14)
+}' brca_clinical_nonbenign_final.bed > brca_final_from_bed.txt
+
+grep -i benign brca_final_from_bed.txt > benign_report_body.txt
+test -s benign_report_body.txt || echo No Matches Found > benign_report_body.txt
+cat benign_report_body.txt | tr '\t' , > benign_report_body.csv
+
+grep -iv benign brca_final_from_bed.txt > nonbenign_report_body.txt
+test -s nonbenign_report_body.txt || echo No Matches Found > nonbenign_report_body.txt
+cat nonbenign_report_body.txt | tr '\t' , > nonbenign_report_body.csv
+
+cat article-title.txt \
+benign-header.txt \
+table-header.txt \
+benign_report_body.csv \
+table-footer.txt \
+nonbenign-header.txt \
+table-header.txt \
+nonbenign_report_body.csv \
+table-footer.txt \
+depth-chart.txt \
+> NA12878-brca1-final-report.txt
+
+a2x -f pdf -d article \
+--dblatex-opts '-P doc.layout="mainmatter" -P doc.publisher.show=0' \
+NA12878-brca1-final-report.txt
 ```
