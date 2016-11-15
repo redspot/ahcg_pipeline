@@ -230,3 +230,7 @@ a2x -f pdf -d article \
 --dblatex-opts '-P doc.layout="mainmatter" -P doc.publisher.show=0' \
 NA12878-brca1-final-report.txt
 ```
+
+# Dilated Cardiomyopathy - gene list
+
+see dcm_genelist.txt
