@@ -237,9 +237,9 @@ see dcm\_genelist.txt
 
 #DCM pipeline
 
-https://www.ncbi.nlm.nih.gov/variation/docs/human\_variation\_vcf/  
-ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf\_GRCh37/clinvar.vcf.gz  
-https://raw.githubusercontent.com/ntopaz/ahcg\_pipeline/master/dcm\_gene\_list.bed  
+https://www.ncbi.nlm.nih.gov/variation/docs/human_variation_vcf/  
+ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/clinvar.vcf.gz  
+https://raw.githubusercontent.com/ntopaz/ahcg_pipeline/master/dcm_gene_list.bed  
 I got my dcm\_gene\_list.bed from my teammate --^
 
 ```{sh}
