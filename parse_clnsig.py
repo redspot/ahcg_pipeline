@@ -153,15 +153,16 @@ def main(
     for rec in in_reader:
         clnsig = rec.INFO['CLNSIG']
         rs = 'rs' + str(rec.INFO['RS'])
+        gene = rec.INFO['GENEINFO']
         clnset = get_clnset(clnsig)
         cat, label = sort_and_label_clnset(clnset)
-        cln_sets[cat].append((rs, label))
+        cln_sets[cat].append((rs, gene, label))
 
     for i, cat in enumerate(cln_sets):
         logger.info('category: {}'.format(categories[i]))
 
-        for rs, label in cat:
-            logger.info('{:<15}|{}'.format(rs, label))
+        for rs, gene, label in cat:
+            logger.info('|{:<15}|{:<15}|{}|'.format(rs, gene, label))
 
         logger.info('total: {}\n'.format(len(cat)))
 
