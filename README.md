@@ -233,4 +233,30 @@ NA12878-brca1-final-report.txt
 
 # Dilated Cardiomyopathy - gene list
 
-see dcm_genelist.txt
+see dcm\_genelist.txt
+
+#DCM pipeline
+
+https://www.ncbi.nlm.nih.gov/variation/docs/human\_variation\_vcf/  
+ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf\_GRCh37/clinvar.vcf.gz  
+https://raw.githubusercontent.com/ntopaz/ahcg\_pipeline/master/dcm\_gene\_list.bed  
+I got my dcm\_gene\_list.bed from my teammate --^
+
+```{sh}
+#shrink clinvar to just DCM genes
+bedtools intersect -a clinvar.vcf.gz -b dcm_gene_list.bed -header > clinvar_allfrombed.vcf
+
+#recalibrate all variants using VQSR
+vcf_vqrs.sh patient2_variants.vcf
+vcf_apply_recal.sh patient2_variants.vcf
+
+#shrink variants to just DCM genes
+bedtools intersect -a patient2_variants_recal.vcf -b dcm_gene_list.bed -header > patient2_dcm_final.vcf
+
+#match variants to clinvar
+bedtools intersect -b patient2_dcm_final.vcf -a clinvar_allfrombed.vcf -header > patient2_intersect_clinvar.vcf
+
+#generate simple report on findings
+python3 parse_clnsig.py -i patient2_intersect_clinvar.vcf.gz 2>&1 | tee patient2_simple_report.txt
+cut -c 24- patient2_simple_report.txt
+```

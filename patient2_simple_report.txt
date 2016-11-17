@@ -1,0 +1,35 @@
+11/17/2016 05:02:59 PM category: Pathogenic
+11/17/2016 05:02:59 PM rs59026483     |Pathogenic
+11/17/2016 05:02:59 PM total: 1
+
+11/17/2016 05:02:59 PM category: Benign
+11/17/2016 05:02:59 PM rs4641         |Benign
+11/17/2016 05:02:59 PM rs45533739     |Benign
+11/17/2016 05:02:59 PM rs398053705    |Benign
+11/17/2016 05:02:59 PM rs730881094    |Benign
+11/17/2016 05:02:59 PM rs13324293     |Benign
+11/17/2016 05:02:59 PM rs1805126      |Benign
+11/17/2016 05:02:59 PM rs41311123     |Benign/Risk factor
+11/17/2016 05:02:59 PM rs7430407      |Benign
+11/17/2016 05:02:59 PM rs41312433     |Benign
+11/17/2016 05:02:59 PM rs6599230      |Benign
+11/17/2016 05:02:59 PM rs11570050     |Benign
+11/17/2016 05:02:59 PM rs398015994    |Benign
+11/17/2016 05:02:59 PM rs2071634      |Benign
+11/17/2016 05:02:59 PM rs365990       |Benign
+11/17/2016 05:02:59 PM rs452036       |Benign
+11/17/2016 05:02:59 PM rs434273       |Benign
+11/17/2016 05:02:59 PM rs2277474      |Benign
+11/17/2016 05:02:59 PM rs7157716      |Benign
+11/17/2016 05:02:59 PM rs735711       |Benign
+11/17/2016 05:02:59 PM total: 19
+
+11/17/2016 05:02:59 PM category: Conflicting interpretations
+11/17/2016 05:02:59 PM rs3729547      |Conflicting interpretations of pathogenicity/Uncertain significance
+11/17/2016 05:02:59 PM rs1805124      |Conflicting interpretations of pathogenicity/Untested
+11/17/2016 05:02:59 PM total: 2
+
+11/17/2016 05:02:59 PM category: Non-pathogenic, non-benign, and non-conflicting
+11/17/2016 05:02:59 PM rs794728905    |Uncertain significance
+11/17/2016 05:02:59 PM total: 1
+
