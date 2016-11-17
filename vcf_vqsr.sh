@@ -1,8 +1,15 @@
 #!/bin/bash
+if [ "$#" -eq 0 ]
+then
+    echo "usage: $0 variants_from_bam.vcf"
+    exit 1
+fi
+
 BASE=/Users/wmartin45/school/biol8803f
 JAR=$BASE/ahcg_pipeline/lib/GenomeAnalysisTK.jar
 REF=$BASE/resources/genome/hg19.fa
-VARIANTS=$BASE/hw3/NA12878_variants.vcf
+#VARIANTS=$BASE/hw6/patient2_variants.vcf
+VARIANTS="$1"
 HAPMAP=$BASE/hw3/hapmap_3.3.hg19.sites.vcf.gz
 OMNI=$BASE/hw3/1000G_omni2.5.hg19.sites.vcf.gz
 PHASE=$BASE/hw3/1000G_phase1.snps.high_conf.hg19.sites.vcf.gz

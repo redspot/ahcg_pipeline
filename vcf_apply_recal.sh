@@ -1,10 +1,17 @@
 #!/bin/bash
+if [ "$#" -eq 0 ]
+then
+    echo "usage: $0 variants_from_bam.vcf"
+    exit 1
+fi
+
 BASE=/Users/wmartin45/school/biol8803f
 JAR=$BASE/ahcg_pipeline/lib/GenomeAnalysisTK.jar
 REF=$BASE/resources/genome/hg19.fa
-VARIANTS=$BASE/hw3/NA12878_variants.vcf
-RECAL=$BASE/hw3/output.recal
-TRANCH=$BASE/hw3/output.tranches
+#VARIANTS=$BASE/hw6/patient2_variants.vcf
+VARIANTS="$1"
+RECAL=$(dirname $VARIANTS)/hw6/output.recal
+TRANCH=$(dirname $VARIANTS)/hw6/output.tranches
 java -jar $JAR \
     -T ApplyRecalibration \
     -R $REF \
