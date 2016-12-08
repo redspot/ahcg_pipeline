@@ -1,13 +1,16 @@
+#!/usr/bin/env Rscript
 
-
-
+#Rscript -e 'install.packages("ggplot2", dep = TRUE, repos="http://cran.rstudio.com/")'
 library(ggplot2)
+
 args<-commandArgs(TRUE)
 
+fn=args[1]
 
-cov <- read.delim(args[1], header=FALSE)
+cov <- read.delim(fn, header=FALSE)
 names(cov) <- c("Chr", "Position", "Coverage")
 
+options(bitmapType='cairo')
 png(filename=args[2])
 qplot(cov$Coverage,
       geom="histogram",
@@ -20,5 +23,3 @@ qplot(cov$Coverage,
       breaks=seq(0,350,5))
 
 junk <- dev.off()
-
-
