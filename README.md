@@ -260,3 +260,20 @@ bedtools intersect -b patient2_dcm_final.vcf -a clinvar_allfrombed.vcf -header >
 python3 parse_clnsig.py -i patient2_intersect_clinvar.vcf.gz 2>&1 | tee patient2_simple_report.txt
 cut -c 24- patient2_simple_report.txt
 ```
+
+
+#DCM basespace VM
+
+login as user basespace
+run the pipeline like below:
+
+```{sh}
+./dcm_pipeline.sh path/reads1.fastq path/reads2.fastq path/to/writable/outdir PREFIX
+```
+
+the PREFIX is a helpful name for this run, such as 'patient1'.  
+many files will get named with that prefix as the first part of the filename.
+
+the final report shoudl be outdir/PREFIX-final-report.pdf  
+md5sum:  
+991ffb9fb29392ca4959624e9a0246de  basespace-wmartin45.ova  
