@@ -25,14 +25,15 @@ recal_vcf="${OUTDIR}/${PREFIX}_recal.vcf"
 dcm_vcf="${OUTDIR}/${PREFIX}_dcm.vcf"
 xref_vcf="${OUTDIR}/${PREFIX}_xref.vcf"
 
-vcf_assembly.sh "$FQ1" "$FQ2" "$OUTDIR"
+./vcf_assembly.sh "$FQ1" "$FQ2" "$OUTDIR"
 
 samtools view -H "$aligned_bam" \
 | sed -e '/^@SQ/s/SN\:chr/SN\:/' \
 | samtools reheader - "$aligned_bam" \
 > "$cleaned_bam"
 
-vcf_vqsr.sh "$aligned_vcf" "$OUTDIR"
-vcf_apply_recal.sh "$aligned_vcf" "$recal_vcf" "$OUTDIR"
-xref_clinvar_dcm.sh "$recal_vcf" "$dcm_vcf" "$xref_vcf" "$OUTDIR" 
-calc_coverage.sh "$cleaned_bam" "$OUTDIR"
+$BASE/ahcg_pipeline/vcf_vqsr.sh "$aligned_vcf" "$OUTDIR"
+$BASE/ahcg_pipeline/vcf_apply_recal.sh "$aligned_vcf" "$recal_vcf" "$OUTDIR"
+./xref_clinvar_dcm.sh "$recal_vcf" "$dcm_vcf" "$xref_vcf" "$OUTDIR" 
+./calc_coverage.sh "$cleaned_bam" "$OUTDIR"
+./gen_report "$PREFIX" "$OUTDIR"
