@@ -137,8 +137,16 @@ def sort_and_label_clnset(cs):
 
 @click.command()
 @click.option('-i', '--input-vcf', 'in_fd', required=True, type=click.File('r'), help='path to input vcf with CLNSIG field')
+@click.option('-p', '--pathogenic', 'p_fd', required=True, type=click.File('w'), help='output for pathogenic variants')
+@click.option('-b', '--benign', 'b_fd', required=True, type=click.File('w'), help='output for benign variants')
+@click.option('-c', '--conflicting', 'c_fd', required=True, type=click.File('w'), help='output for conflicting variants')
+@click.option('-o', '--other', 'o_fd', required=True, type=click.File('w'), help='output for other variants')
 def main(
-    in_fd
+    in_fd,
+    p_fd,
+    b_fd,
+    c_fd,
+    o_fd,
 ):
     try:
         in_reader = vcf.Reader(in_fd)
@@ -160,9 +168,20 @@ def main(
 
     for i, cat in enumerate(cln_sets):
         logger.info('category: {}'.format(categories[i]))
+        if categories[i] == 'Pathogenic':
+            out_fd = p_fd
+        if categories[i] == 'Benign':
+            out_fd = b_fd
+        if categories[i] == 'Conflicting interpretations':
+            out_fd = c_fd
+        if categories[i] == 'Non-pathogenic, non-benign, and non-conflicting':
+            out_fd = o_fd
 
         for rs, gene, label in cat:
-            logger.info('|{:<15}|{:<15}|{}|'.format(rs, gene, label))
+            line = '|{:<15}|{:<15}|{}|'.format(rs, gene, label)
+            logger.info(line)
+            line = '{}\t{}\t{}'.format(rs, gene, label)
+            out_fd.write(line + '\n')
 
         logger.info('total: {}\n'.format(len(cat)))
 
