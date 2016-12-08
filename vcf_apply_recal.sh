@@ -1,17 +1,19 @@
 #!/bin/bash
-if [ "$#" -eq 0 ]
+if [ "$#" -ne 3 ]
 then
-    echo "usage: $0 variants_from_bam.vcf"
+    echo "usage: $0 assembled.vcf recal_output.vcf recaldir"
     exit 1
 fi
+set -e
 
-BASE=/Users/wmartin45/school/biol8803f
+BASE=/home/basespace
 JAR=$BASE/ahcg_pipeline/lib/GenomeAnalysisTK.jar
 REF=$BASE/resources/genome/hg19.fa
-#VARIANTS=$BASE/hw6/patient2_variants.vcf
 VARIANTS="$1"
-RECAL=$(dirname $VARIANTS)/hw6/output.recal
-TRANCH=$(dirname $VARIANTS)/hw6/output.tranches
+RECAL_OUT="$2"
+OUTBASE="$3"
+RECAL="$OUTBASE/output.recal"
+TRANCH="$OUTBASE/output.tranches"
 java -jar $JAR \
     -T ApplyRecalibration \
     -R $REF \
@@ -20,4 +22,4 @@ java -jar $JAR \
     --ts_filter_level 99.0 \
     -recalFile $RECAL \
     --tranches_file $TRANCH \
-    -o NA12878_variants_recal.vcf
+    -o $RECAL_OUT
